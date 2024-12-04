@@ -14,33 +14,40 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Users extends BaseEntity {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /*@Column(nullable = false)
+    @Column(name = "user_id")
     private String userId;
 
-    @Column(nullable = false)
-    private String password;*/
+    @Column(name = "user_pwd")
+    private String password;
 
-    @Column(nullable = false)
+    @Column(name = "user_name")
+    private String name;
+
+    @Column(name = "user_birth")
+    private String birth;
+
+    @Column(nullable = false, name = "user_email", unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private String nickName;
+    // @Column(nullable = false)
+    // private String nickName;
 
-    @Column(name = "profile_image_url")
-    private String profileImageUrl;
+    // @Column(name = "profile_image_url")
+    // private String profileImageUrl;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "oauth_provider", nullable = false)
-    private String oauth;
-
+    
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    // @Column(name = "oauth_provider", nullable = false)
+    // private String oauth;
 
     @PrePersist
     protected void onCreate() {

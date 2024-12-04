@@ -15,7 +15,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 import com.bitcamp.drrate.domain.google.dto.response.GoogleUserInfoResponseDTO.UserAccessTokenDTO;
-import com.bitcamp.drrate.domain.google.dto.response.GoogleUserInfoResponseDTO.UserInfoDTO;
+import com.bitcamp.drrate.domain.users.dto.response.UsersResponseDTO.GoogleUserInfoDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,11 +42,11 @@ public class GoogleServiceImpl implements GoogleService {
     }
 
     @Override
-    public String login(String code) {
-        //System.out.println("code = " + code);
+    public GoogleUserInfoDto login(String code) {
+        System.out.println("code = " + code);
         //코드를 받고 AccessToken을 받음. 아래에 getAccessToken 메서드를 통해서 accessToken을 발급받음
         String accessToken = getAccessToken(code);
-        //System.out.println("AccessToken = " + accessToken);
+        System.out.println("AccessToken = " + accessToken);
         //발급받은 accessToken에서 값을 분리해서 access_token 값만 따로 파싱해서 가져옴
         UserAccessTokenDTO token = parseAccessToken(accessToken);
 
@@ -61,9 +61,9 @@ public class GoogleServiceImpl implements GoogleService {
 
          String userInfo = result.getBody();
         //사용자 정보를 json형식으로 받아서 콘솔창으로 확인
-        //System.out.println(result.getStatusCode() + "\n" + result.getHeaders() + "\n" + result.getBody());
+        System.out.println(result.getStatusCode() + "\n" + result.getHeaders() + "\n" + result.getBody());
 
-        UserInfoDTO infoDTO = new UserInfoDTO();
+        GoogleUserInfoDto infoDTO = new GoogleUserInfoDto();
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             Map<String, Object> parse = objectMapper.readValue(userInfo, Map.class);
@@ -73,7 +73,7 @@ public class GoogleServiceImpl implements GoogleService {
             infoDTO.setSub((String)parse.get("sub"));
             infoDTO.setPicture((String)parse.get("picture"));
 
-            return (String)parse.get("email");
+            return infoDTO;
         } catch(Exception e){
             e.printStackTrace();
             return null;
@@ -90,7 +90,7 @@ public class GoogleServiceImpl implements GoogleService {
         HttpHeaders headers = new HttpHeaders();
         // Http ContentType을 설정하는줄
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        //System.out.println("Header: " + headers.toString()); //헤더 확인
+        System.out.println("Header: " + headers.toString()); //헤더 확인
 
         // Http Body를 만들기 위해서 Map에 여러 변수를 담는 줄
         // 구글 API를 사용하기 위해 필요한 값들을 담기 위해서 사용
@@ -100,20 +100,20 @@ public class GoogleServiceImpl implements GoogleService {
         params.add("client_secret", client_secret);
         params.add("redirect_uri", redirect_uri);
         params.add("grant_type", "authorization_code");
-        //System.out.println("Parameters: " + params.toString()); // Map 확인
+        System.out.println("Parameters: " + params.toString()); // Map 확인
 
         // Http 요청의 Body부분, 요청을 위해 header와 map에 담은 값들을 담아주는 줄
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-        //System.out.println("Request Body: " + request.getBody()); // HttpEntity의 바디 확인
-        //System.out.println("Request Headers: " + request.getHeaders()); // HttpEntity의 헤더 확인
+        System.out.println("Request Body: " + request.getBody()); // HttpEntity의 바디 확인
+        System.out.println("Request Headers: " + request.getHeaders()); // HttpEntity의 헤더 확인
 
         // Http 응답을 나타내는 클래스, 응답 형태를 String 형태로 받기위해 사용.
         // restTemplate.postForEntity로 요청을 보내고 구글 API 서버로 부터 응답을 ResponseEntity 객체로 받아온다.
         // 이 객체로 Http 응답 코드, 헤더, 바디 등을 받아온다.
         ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
         // 요청해서 받아왔으니 이제 sysout으로 받아온 값들을 확인해본다.
-        //System.out.println("Response Body: " + response.getBody()); // ResponseEntity의 바디 확인
-        //System.out.println("Response Status Code: " + response.getStatusCode()); // ResponseEntity의 상태 코드 확인
+        System.out.println("Response Body: " + response.getBody()); // ResponseEntity의 바디 확인
+        System.out.println("Response Status Code: " + response.getStatusCode()); // ResponseEntity의 상태 코드 확인
         
         //이제 이 코드가 위에login 메서드에서 사용됨
         return response.getBody();
@@ -134,10 +134,10 @@ public class GoogleServiceImpl implements GoogleService {
             tokenDTO.setIdToken((String)parseToken.get("id_token"));
 
             // System.out.println("access_token: " + token + "\n" + 
-            //                     "expires_in: " + expiresIn + "\n" + 
-            //                     "scope: " + scope + "\n" + 
-            //                     "token_type: " + tokenType + "\n" +
-            //                     "id_token: " + idToken);
+            //                      "expires_in: " + expiresIn + "\n" + 
+            //                      "scope: " + scope + "\n" + 
+            //                      "token_type: " + tokenType + "\n" +
+            //                      "id_token: " + idToken);
 
             return tokenDTO;
         } catch (Exception e) {

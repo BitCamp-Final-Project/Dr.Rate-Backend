@@ -5,9 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 public class UsersResponseDTO {
 
+    
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -18,6 +20,26 @@ public class UsersResponseDTO {
         @NotNull
         private String password;
         @NotNull
+        private String email;
+    }
+
+    @Builder
+    @Getter@Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GoogleUserInfoDto{
+        private String sub;
+        private String name;
+        private String picture;
+        private String email; 
+    }
+
+    @Builder
+    @Getter@Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class KakaoUserInfoDto {
+        private String name;
         private String email;
     }
 }

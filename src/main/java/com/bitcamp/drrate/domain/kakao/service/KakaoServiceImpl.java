@@ -10,6 +10,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.bitcamp.drrate.domain.kakao.dto.response.KakaoTokenResponseDTO;
 import com.bitcamp.drrate.domain.kakao.dto.response.KakaoUserInfoResponseDTO;
+import com.bitcamp.drrate.domain.users.dto.response.UsersResponseDTO;
+import com.bitcamp.drrate.domain.users.dto.response.UsersResponseDTO.KakaoUserInfoDto;
 
 import io.netty.handler.codec.http.HttpHeaderValues;
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,7 +41,7 @@ public class KakaoServiceImpl implements KakaoService {
     }
 
     @Override
-    public String login(String code) {
+    public KakaoUserInfoDto login(String code) {
         KakaoTokenResponseDTO kakaoTokenResponseDTO = WebClient.create(KAUTH_TOKEN_URL_HOST).post()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("https")
@@ -69,7 +71,7 @@ public class KakaoServiceImpl implements KakaoService {
     }
 
     //사용자 정보 요청
-    private String getUserInfo(String accessToken) {
+    private KakaoUserInfoDto getUserInfo(String accessToken) {
         KakaoUserInfoResponseDTO userInfo = WebClient.create(KAUTH_USER_URL_HOST)
                 .get()
                 .uri(uriBuilder -> uriBuilder
@@ -92,6 +94,14 @@ public class KakaoServiceImpl implements KakaoService {
         log.info("[Kakao Service] NickName ---> {} ", userInfo.getKakaoAccount().getProfile().getNickName());
         log.info("[Kakao Service] ProfileImageUrl ---> {} ", userInfo.getKakaoAccount().getProfile().getProfileImageUrl());
 
-        return userInfo.getKakaoAccount().getEmail();
+        String name = userInfo.getKakaoAccount().getName();
+        String email = userInfo.getKakaoAccount().getEmail();
+
+        KakaoUserInfoDto userDTO = new KakaoUserInfoDto();
+        userDTO.setName(name);
+        userDTO.setEmail(email);
+
+
+        return userDTO;
     }
 }

@@ -27,9 +27,9 @@ public class UsersServiceImpl implements UsersService {
         // 신규 사용자 회원가입 처리
         Users newUsers = Users.builder()
                 .email(userInfo.getKakaoAccount().getEmail())
-                .nickName(userInfo.getKakaoAccount().getProfile().getNickName())
-                .profileImageUrl(userInfo.getKakaoAccount().getProfile().getProfileImageUrl())
-                .oauth("kakao")//제공자를 카카오로 설정
+                .name(userInfo.getKakaoAccount().getProfile().getNickName())
+                // .profileImageUrl(userInfo.getKakaoAccount().getProfile().getProfileImageUrl())
+                // .oauth("kakao")//제공자를 카카오로 설정
                 .build();
 
         return usersRepository.save(newUsers);
