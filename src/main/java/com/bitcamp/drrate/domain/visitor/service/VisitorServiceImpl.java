@@ -37,8 +37,10 @@ public class VisitorServiceImpl implements VisitorService {
                 redisKey = "daily_visitors:member:" + today;
 
                 String redisKey2 = "daily_visitors:guest:" + today;
-
-                Boolean isGuestLoggedIn = redisTemplate.opsForSet().isMember(redisKey2, guestId);
+                Boolean isGuestLoggedIn = false;
+                if(guestId != null) {
+                    isGuestLoggedIn = redisTemplate.opsForSet().isMember(redisKey2, guestId);
+                }
 
                 if (Boolean.FALSE.equals(isGuestLoggedIn)) {
                     Boolean isMemberVisited = redisTemplate.opsForSet().isMember(redisKey, String.valueOf(userId));
